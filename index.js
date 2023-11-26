@@ -52,6 +52,19 @@ async function run() {
         res.send(result);
     })
 
+    app.get("/myarticles", async(req,res)=>{
+        
+        let query = {};
+        if(req.query?.email){
+            query={
+                author_email: req.query.email,
+            }
+            // console.log(query);
+        }
+        const result = await postsCollection.find(query).toArray();
+        res.send(result)
+    })
+
 
 
 
