@@ -91,6 +91,7 @@ async function run() {
           article: updateRequest.article,
           type: updateRequest.type,
           photoURL: updateRequest.photoURL,
+          status: "pending",
         }
       };
       const result = await postsCollection.updateOne(query, updatedArticle);
