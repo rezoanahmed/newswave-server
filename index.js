@@ -52,6 +52,24 @@ async function run() {
         res.send(result);
     })
 
+    app.patch("/posts/:id", async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const updateRequest = req.body;
+      // console.log(updateRequest);
+      const updatedArticle = {
+        $set:{
+          title: updateRequest.title,
+          category: updateRequest.category,
+          article: updateRequest.article, 
+          type: updateRequest.type,
+          photoURL: updateRequest.photoURL,
+        }
+      };
+      const result = await postsCollection.updateOne(query, updatedArticle);
+      res.send(result);
+    })
+
     
     app.get("/post/:id", async(req,res)=>{
         const id = req.params.id;
