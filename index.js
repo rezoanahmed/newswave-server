@@ -34,34 +34,61 @@ async function run() {
 
 
     // posts crud
-    app.post("/posts", async(req,res)=>{
-        const post = req.body;
-        const result = await postsCollection.insertOne(post);
-        res.send(result);
+    app.post("/posts", async (req, res) => {
+      const post = req.body;
+      const result = await postsCollection.insertOne(post);
+      res.send(result);
     })
 
-    app.get("/posts", async(req,res)=>{
-        const result = await postsCollection.find().toArray();
-        res.send(result);
+    app.get("/posts", async (req, res) => {
+      const result = await postsCollection.find().toArray();
+      res.send(result);
+    })
+    app.get("/articles", async (req, res) => {
+
+      let query = {};
+      if (req.query?.status) {
+        query = {
+          status: req.query.status,
+        }
+        // console.log(query);
+      }
+      const result = await postsCollection.find(query).toArray();
+      res.send(result)
     })
 
-    app.delete("/posts/:id", async(req,res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)};
-        const result = await postsCollection.deleteOne(query);
-        res.send(result);
+    app.delete("/posts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await postsCollection.deleteOne(query);
+      res.send(result);
     })
 
-    app.patch("/posts/:id", async(req,res)=>{
+    app.patch("/approval/:id", async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const updateRequest = req.body;
       // console.log(updateRequest);
-      const updatedArticle = {
+      const updatedApproval = {
         $set:{
+          status: updateRequest.status,
+        }
+      }
+      const result = await postsCollection.updateOne(query, updatedApproval);
+      res.send(result);
+
+    })
+
+    app.patch("/posts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updateRequest = req.body;
+      // console.log(updateRequest);
+      const updatedArticle = {
+        $set: {
           title: updateRequest.title,
           category: updateRequest.category,
-          article: updateRequest.article, 
+          article: updateRequest.article,
           type: updateRequest.type,
           photoURL: updateRequest.photoURL,
         }
@@ -70,26 +97,26 @@ async function run() {
       res.send(result);
     })
 
-    
-    app.get("/post/:id", async(req,res)=>{
-        const id = req.params.id;
-        // console.log(id);
-        const query = {_id: new ObjectId(id)};
-        const result = await postsCollection.findOne(query);
-        res.send(result);
+
+    app.get("/post/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await postsCollection.findOne(query);
+      res.send(result);
     })
 
-    app.get("/myarticles", async(req,res)=>{
-        
-        let query = {};
-        if(req.query?.email){
-            query={
-                author_email: req.query.email,
-            }
-            // console.log(query);
+    app.get("/myarticles", async (req, res) => {
+
+      let query = {};
+      if (req.query?.email) {
+        query = {
+          author_email: req.query.email,
         }
-        const result = await postsCollection.find(query).toArray();
-        res.send(result)
+        // console.log(query);
+      }
+      const result = await postsCollection.find(query).toArray();
+      res.send(result)
     })
 
 
@@ -104,7 +131,7 @@ run().catch(console.dir);
 
 
 
-app.get("/", (req,res)=>{
-    res.send("News Wave Server Is Running Prefectly");
+app.get("/", (req, res) => {
+  res.send("News Wave Server Is Running Prefectly");
 })
 app.listen(port);
