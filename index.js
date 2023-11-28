@@ -31,6 +31,7 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     const postsCollection = client.db("newswave").collection("posts");
+    const usersCollection = client.db("newswave").collection("users");
 
 
     // posts crud
@@ -119,6 +120,29 @@ async function run() {
       const result = await postsCollection.find(query).toArray();
       res.send(result)
     })
+
+    // users
+    app.post("/users", async(req,res)=>{
+      const user = req.body;
+      // console.log(user);
+      const query = {email: user.email};
+      const existingUser = await usersCollection.findOne(query);
+      if(existingUser){
+        return;
+      }
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+
+    })
+
+    app.get("/users", async(req,res)=>{
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    })
+
+    
+
+    
 
 
 
