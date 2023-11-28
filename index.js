@@ -121,6 +121,7 @@ async function run() {
       res.send(result)
     })
 
+
     // users
     app.post("/users", async(req,res)=>{
       const user = req.body;
@@ -140,11 +141,19 @@ async function run() {
       res.send(result);
     })
 
-    
-
-    
-
-
+    app.patch("/user/:id", async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const updateRequest = req.body;
+      // console.log(updateRequest);
+      const updatedAdmin = {
+        $set:{
+          role: updateRequest.role,
+        }
+      }
+      const result = await usersCollection.updateOne(query, updatedAdmin);
+      res.send(result);
+    })
 
 
   } finally {
