@@ -10,6 +10,7 @@ app.use(express.json());
 
 // mongodb
 
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.user}:${process.env.pass}@cluster0.sr4dbs2.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -160,6 +161,19 @@ async function run() {
         }
       }
       const result = await usersCollection.updateOne(query, updatedAdmin);
+      res.send(result);
+    })
+
+    app.patch("/premiumuser/:email", async(req,res)=>{
+      const email = req.params.email;
+      const query = {email:email};
+      const updateRequest = req.body;
+      const updatedDoc = {
+        $set:{
+          account_type: updateRequest.account_type,
+        }
+      };
+      const result = await usersCollection.updateOne(query, updatedDoc);
       res.send(result);
     })
 
